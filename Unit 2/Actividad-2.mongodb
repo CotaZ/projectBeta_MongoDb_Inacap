@@ -1,0 +1,32 @@
+use("mongodb_inacap")
+
+db.peliculas.drop()
+
+db.peliculas.insertMany([
+    { _id: 1, titulo: "Riesgo bajo cero", director: "Jonathan Hensleigh", estreno: 2021, actores: ["Liam Neeson", "Benjamin Walker", "Laurence Fishburne"], musica: "Max Aruj" },
+    { _id: 2, titulo: "Iron Man", director: "Jon Favreau", estreno: 2008, actores: ["Robert Downet Jr", "Terrence Howard", "Jeff Bridges", "Gwyneth Paltrow"] },
+    { _id: 3, titulo: "Oblivion", director: "Joseph Kosinki", estreno: 2013, actores: ["Tom Cruise", "Olga Kurylenko", "Andrea Riseborough", "Morgan Freeman"] }
+])
+
+
+//1 Mostrar todos los archivos
+use("mongodb_inacap")
+db.peliculas.find()
+//2 Mostrar el primer documento
+use("mongodb_inacap")
+db.peliculas.findOne({})
+//3 Mostrar los documentos donde esté el actor Tom Cruise
+use("mongodb_inacap")
+db.peliculas.findOne({ _id: 3 }, { actores: ["Tom Cruise", "Olga Kurylenko", "Andrea Riseborough", "Morgan Freeman"] })
+//4 . Mostrar los documentos donde el director sea Jon Favreau
+use("mongodb_inacap")
+db.peliculas.findOne({ _id: 2 }, { director: "Jon Favreau" })
+//5 Mostrar todos los documentos, pero sin mostrar el campo _id
+use("mongodb_inacap")
+db.peliculas.find({}, { _id: 0, titulo: 1, director: 1, estreno: 2021, actores: ["Liam Neeson", "Benjamin Walker", "Laurence Fishburne"], musica: "Max Aruj" },
+    { _id: 0, titulo: 2, director: 2, estreno: 2008, actores: ["Robert Downet Jr", "Terrence Howard", "Jeff Bridges", "Gwyneth Paltrow"] },
+    { _id: 0, titulo: 3, director: 3, estreno: 2013, actores: ["Tom Cruise", "Olga Kurylenko", "Andrea Riseborough", "Morgan Freeman"] })
+//6 Mostrar sólo los títulos de las películas registradas
+use("mongodb_inacap")
+db.peliculas.find({}, { _id: 1, titulo: 1, _id: 2, titulo: 1, _id: 3, titulo: 1 })
+

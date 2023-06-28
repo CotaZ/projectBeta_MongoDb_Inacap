@@ -1,0 +1,5 @@
+use("mongodb_inacap")
+db.alumnos.insertOne(
+    { _id : 5, 'quizzes' : [ { 'semana': 1, 'nota' : 4.8 }, { 'semana': 2, 'nota' : 3.8 },
+    { 'semana': 3, 'nota' : 5.1}, { 'semana': 4, 'nota' : 5.6 } ] } )
+    

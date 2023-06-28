@@ -1,0 +1,19 @@
+// $gt Coincide con valores que son mayores que un valor especificado.
+
+use("mongodb_inacap")
+db.inventario.drop()
+
+db.inventario.insertMany([
+    { articulo: "nueces", cantidad: 30, transportista: { nombre: "ValpoShip", tarifa: 3 } },
+    { articulo: "pernos", cantidad: 50, transportista: { nombre: "ValpoShip", tarifa: 4 } },
+    { articulo: "arandelas", cantidad: 10, transportista: { nombre: "ValpoShip", tarifa: 5 } }
+])
+
+db.inventario.find ()
+
+//1. Para seleccionar todos los documentos de la colección inventario donde cantidad sea mayor que 20, usamos:
+use("mongodb_inacap")
+db.inventario.find({cantidad: {$gt:20}})
+//2. Para seleccionar todos los documentos de la colección inventario donde la tarifa (campo de un documento anidado) es mayor que 3, usamos:
+use("mongodb_inacap")
+db.inventario.find({"transportista.tarifa": {$gt: 3 }})

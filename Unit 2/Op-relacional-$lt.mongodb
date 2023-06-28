@@ -1,0 +1,20 @@
+//$lt Coincide con valores que son menores que un valor especificado.
+
+use("mongodb_inacap")
+
+db.inventario.drop()
+
+db.inventario.insertMany([
+    { "articulo": "nueces", "cantidad": 30, "transportista": { "nombre": "ValpoShip", "tarifa": 3 } },
+    { "articulo": "pernos", "cantidad": 50, "transportista": { "nombre": "ValpoShip", "tarifa": 4 } },
+    { "articulo": "arandelas", "cantidad": 10, "transportista": { "nombre": "ValpoShip", "tarifa": 5 } }
+])
+
+db.inventario.find()
+
+//1. Para seleccionar todos los documentos de la colección inventario donde cantidad sea menor que 50, usamos:
+use("mongodb_inacap")
+db.inventario.find({cantidad: {$lt: 50}})
+//2. Para seleccionar todos los documentos de la colección inventario donde la tarifa (campo de un documento anidado) es menor que 5, usamos:
+use("mongodb_inacap")
+db.inventario.find({"transportista.tarifa": {$lt: 5}}, {_id: 0})

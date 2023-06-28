@@ -1,0 +1,16 @@
+use("mongodb_inacap")
+
+db.juego.find()
+
+// Se pide realizar las siguientes consultas
+// 1. Juegos que son de tipo aventura
+db.juego.find( { 'info.tipo':'aventura'} )
+// 2. Juegos que soporten la consola ps5
+db.juego.find({'info.costos.consola':'ps5'})
+// 3. Juegos de la consola xbox cuyos valor se encuentre entre 30000 y 45000
+db.juego.find({'info.costos':{$elemMatch:{consola:'xbox',
+valor:{$gte:30000,$lte:45000}}}})
+// 4. Muestre los juegos que tienen 2 consolas
+db.juego.find ({'info.costos':{$size:2} } )
+// 5. Muestre los juegos donde la tercera consola sea switch.
+db.juego.find( {'info.costos.2.consola':'switch'} )

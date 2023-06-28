@@ -1,0 +1,17 @@
+//$in Coincide con cualquiera de los valores especificados en un arreglo.
+use("mongodb_inacap")
+
+db.inventario.drop()
+
+db.inventario.insertMany([
+    { articulo: "bolígrafos", cantidad: 350, etiquetas: ["escuela", "oficina"] },
+    { articulo: "Borradores", cantidad: 15, etiquetas: ["escuela", "casa"] },
+    { articulo: "Mapas", etiquetas: ["oficina", "almacenamiento"] },
+    { articulo: "Libros", cantidad: 5, etiquetas: ["escuela", "almacenamiento", "casa"] }
+])
+
+db.inventario.find()
+
+//1. Esta consulta selecciona todos los documentos de la colección inventario donde el valor del campo cantidad es 5 o 15.
+use("mongodb_inacap")
+db.inventario.find({cantidad: {$in: [5, 15]}}, { _id: 0})

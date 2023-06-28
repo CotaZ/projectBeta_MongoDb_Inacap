@@ -1,0 +1,10 @@
+use("mongodb_inacap")
+
+// Colección “sales”:
+// 8. Mostrar las ventas y sus fechas en que se vendieron 10 "printer paper".
+// 9. Mostrar las ventas en que el 1er ítem es "binder" (mostrar todos los ítems).
+// 10. Mostrar las ventas en que el 1er ítem es "binder" (mostrar sólo el primer ítem).
+// 11. Mostrar las ventas en que el 1er ítem es "binder" o "notepad", mostrar todos los ítems.
+// 12. Mostrar las ventas en que el 1er ítem es "binder" o "notepad", mostrar sólo 1er ítem.
+// 13. Mostrar las ventas en que el 1er ítem "notepad", con cantidad < 3 y precio > 20.
+

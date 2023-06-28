@@ -1,0 +1,12 @@
+use("mongodb_inacap")
+
+db.inventory.drop()
+
+db.inventory.insertMany ([
+    { item: "diario", cantidad: 25, tags: ["vacío", "rojo"], dim_cm: [ 14, 21] },
+    { item: "cuaderno", cantidad: 50, tags: ["rojo", "vacío"], dim_cm: [ 14, 21] },
+    { item: "papel", cantidad: 100, tags: ["rojo", "vacío", "sencillo"], dim_cm: [ 14, 21] },
+    { item: "planificador", cantidad: 75, tags: ["vacío", "rojo"], dim_cm: [ 22.85, 30] },
+    { item: "postal", cantidad: 45, tags: ["azul"], dim_cm: [ 10, 15.25 ] }
+    ]);
+

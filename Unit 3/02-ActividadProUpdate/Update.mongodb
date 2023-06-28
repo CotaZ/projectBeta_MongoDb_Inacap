@@ -1,0 +1,48 @@
+// MongoDB – CRUD sobre Arreglos.
+// Colección “movies”:
+// 1. Para la película de título "Blacksmith Scene", agregar el actor "Cantinflas" al final del arreglo “cast”.
+use("mongodb_inacap")
+db.movies.updateOne(
+    { title: "Blacksmith Scene" },
+    { $push: { cast: "Cantiflas" } }
+)
+
+// 2. Para el documento con _id "573a1390f29313caabcd4803", agregar los actores: "Malú Gatica", "Teresa
+// Berganza" y "Mario Montilles", al final del arreglo “cast”.
+use("mongodb_inacap")
+db.movies.updateOne(
+    { _id: ObjectId("573a1390f29313caabcd4803") },
+    {
+        $push: {
+            "cast":
+            {
+                $each: ["Malú Gatica", "Teresa Berganza", "Mario Montilles"]
+            }
+        }
+    }
+)
+// 3. Para la película de título "Blacksmith Scene", cambiar el nombre del 2° actor a "Juan Ortega", en el
+// arreglo “cast”.}
+use("mongodb_inacap")
+db.movies.
+// 4. Para la película de título "Grass: A Nation's Battle for Life", cambiar el nombre de la actriz "Marguerite
+// Harrison" a "Margarita Herrera" en el arreglo “cast” (aquí no se conoce la posición del elemento dentro del
+// arreglo).
+// 5. Para las series que se hayan filmado en países distintos de "UK" y "USA" y en lenguajes distintos a
+// “English”, agregar el lenguaje “Español” al arreglo “languages”.
+// 6. Para la película de título "A Corner in Wheat", agregar como 3er actor a "Sonia Viveros" (tercer elemento
+// dentro del arreglo “cast”).
+// 7. Para las películas (o series) cuyo género corresponda a: "Drama", "History" y "Crime", eliminar el
+// escritor (writers) "Truman Capote" del arreglo “writers” (usar expresión regular).
+// 8. Para las películas (o series) del año 2002, que en el campo "plot" contengan la palabra "police", eliminar
+// el elemento de valor "English" del arreglo "languages".
+// 9. Para las películas anteriores al año 1920 y que tengan 4 actores o actrices, eliminar los 2 últimos.
+// 10. Para las películas (o series) que tengan 3 actores o actrices, clasificadas con 3 géneros y que no se
+// hayan publicado en un único lenguaje. Agregar al escritor “Óscar Castro” en la 2da posición del arreglo
+// writers, usar operador $not.
+// 11. Para las películas (o series) en que hayan participado 10 u 11 países (countries), cambiar el país “USA”
+// por “EEUU”.
+// 12. Para las películas que tengan 6 directores (directors), se pide agregar al final del arreglo, los
+// siguientes 3 directores: Belfort Rus, Pablo Izquierdo, Víctor Tebah: y eliminar los primeros 3 directores
+// (al final las películas se mantienen con 6 directores).
+

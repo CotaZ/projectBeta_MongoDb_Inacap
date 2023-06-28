@@ -1,0 +1,33 @@
+use("mongodb_inacap")
+
+db.personas.updateOne({
+    nombre: 'Any'
+},
+    {
+        $set: {
+            hobbies: [
+                'nadar',
+                'leer',
+                'bailar'
+            ]
+        }
+    })
+
+db.personas.updateOne({
+    nombre: 'Bobby'
+},
+    {
+        $set: {
+            hobbies: [
+                'jugar',
+                'leer'
+            ]
+        }
+
+    })
+
+db.personas.updateOne({ nombre: 'Sonny' }, {
+    $set: { hobbies: ['leer', 'jugar', 'bailar'] }
+})
+db.personas.updateOne({ nombre: 'Cher' },
+    { $set: { hobbies: ['nadar', 'caminar', 'bailar', 'leer'] } })

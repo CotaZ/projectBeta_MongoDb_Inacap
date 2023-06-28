@@ -1,0 +1,4 @@
+use("mongodb_inacap")
+
+db.alumnos.find()
+

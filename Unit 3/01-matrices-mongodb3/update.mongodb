@@ -1,0 +1,10 @@
+// 1. Mostrar documentos que tengan solo 1 tag registrado
+// 2. Mostrar documentos que tengan el tags 'vacío'
+// 3. Mostrar documentos que tengan el tags 'vacío', 'rojo' respetando el orden4. Mostrar documentos que tengan el tags 'vacío', 'rojo' sin importar el
+// orden
+// 5. Mostrar documentos donde el dim_cm es mayor a 25
+// 6. Mostrar documentos donde el primer elemento de dim_cm sea menor a
+// 15 (“dim_cm.0”
+
+use("mongodb_inacap")
+

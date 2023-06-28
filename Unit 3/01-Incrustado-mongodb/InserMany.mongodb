@@ -1,0 +1,26 @@
+use("mongodb_inacap")
+
+db.alumnos.drop()
+
+db.alumnos.insertMany([
+    {
+        nombre: "Jhon",
+        cursos: [{ tema: "PHP", nota: 4 }, { tema: "JAVA", nota: 7 }]
+    },
+    {
+        nombre: "Paul",
+        cursos: [{ tema: "C#", nota: 7 }]
+    },
+    {
+        nombre: "Mary",
+        cursos: [{ tema: "PHP", nota: 2 }, { tema: "JAVA", nota: 4 }]
+    },
+    {
+        nombre: "Matt",
+        cursos: [{ tema: "JS", nota: 4 }, { tema: "PYTHON", nota: 3 }]
+    },
+    {
+        nombre: "Anne",
+        cursos: [{ tema: "JAVA", nota: 3 }, { tema: "DART", nota: 6 }]
+    }
+])

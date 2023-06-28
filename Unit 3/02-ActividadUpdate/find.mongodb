@@ -1,0 +1,16 @@
+use("mongodb_inacap")
+
+db.juego.find()
+
+//ACTIVIDADES
+//1. Modificar el precio del juego fifa 2022 para la Xbox a 50000
+use("mongodb_inacap")
+db.juego.updateOne( {nombre:'fifa 2022','info.costos.consola':'xbox'},
+{$set:{'info.costos.$.valor':50000} } )
+
+db.juego.updateOne({nombre: "fifa 2022",})
+//2. Reducir el precio del juego sims 4 para el ps5 en 15000
+use("mongodb_inacap")
+
+//3. Agregar un campo llamado calificación y agregar una estrella (*)
+use("mongodb_inacap")

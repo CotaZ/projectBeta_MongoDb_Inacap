@@ -1,0 +1,31 @@
+// $eq = Coincide con valores que son iguales a un valor especificado.
+
+use("mongodb_inacap")
+
+db.inventario.drop()
+
+db.inventario.insertMany([
+    { _id: 1, articulo: { nombre: " ab ", cod: "123" }, cantidad: 15, etiquetas: [" A ", " B ", " C "] },
+    { _id: 2, articulo: { nombre: " cd ", cod: "123" }, cantidad: 20, etiquetas: [" B "] },
+    { _id: 3, articulo: { nombre: " ij ", cod: "456" }, cantidad: 25, etiquetas: [" A ", " B "] },
+    { _id: 4, articulo: { nombre: " xy ", cod: "456" }, cantidad: 30, etiquetas: [" B ", " A "] },
+    { _id: 5, articulo: { nombre: " mn ", cod: "000" }, cantidad: 20, etiquetas: [[" A ", " B "], " C "] }
+])
+
+db.inventario.find()
+
+//1. El siguiente ejemplo consulta la colección inventario para seleccionar todos los documentos donde el valor del campo cantidad es igual a 20:
+use("mongodb_inacap")
+db.inventario.find({ cantidad: { $eq: 20 } })
+
+//2. El siguiente ejemplo consulta la colección inventario para seleccionar todos los documentos donde el valor del campo nombre en el documento articulo es igual a "ab". Para especificar una condición en un campo de un documento anidado, utilice la notación de puntos .
+use("mongodb_inacap")
+db.inventario.find({ "articulo.nombre": {$eq:" ab "} })
+
+//3. El siguiente ejemplo consulta la colección inventario para seleccionar todos los documentos donde el arreglo etiquetas es exactamente igual al arreglo especificado o el arreglo etiquetas contiene un elemento que es igual al arreglo [ "A", "B" ].
+use("mongodb_inacap")
+db.inventario.find( {etiquetas: {$eq: [" A ", " B " ]}})
+
+
+
+

@@ -1,0 +1,11 @@
+use("mongodb_inacap")
+db.juego.insertMany( [
+    { nombre: 'fifa 2022', info: { tipo: 'deporte', costos:[ {consola:'xbox', valor:40000}, {consola:'ps5',
+    valor:45000}, {consola:'pc', valor:43000} ] } },
+    { nombre:'minecraft', info:{ tipo:'aventura', costos:[ {consola:'switch', valor:35000},
+    {consola:'xbox', valor:35000} ] } },
+    { nombre:'sims 4', info:{ tipo:'simulacion', costos:[ {consola:'xbox', valor:29000}, {consola:'ps5',
+    valor:31000}, {consola:'switch', valor:28000} ] } },
+    { nombre:'jurassic world evolution', info:{ tipo:'simulacion', modo:'1 jugador', costos:[
+    {consola:'ps5', valor:23000}, {consola:'xbox', valor:25000} ] } } ] )
+    

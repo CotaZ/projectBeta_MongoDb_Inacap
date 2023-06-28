@@ -1,0 +1,11 @@
+use("mongodb_inacap")
+db.alumnos.updateOne(
+    { _id: 5 }, { $push: { quizzes: {
+    $each: [ {semana: 5, nota: 3.8},
+    {semana: 6, nota: 5.7},
+    {semana: 7, nota: 4.6} ],
+    $sort: { nota: -1 },
+    $slice: 3 }
+    }
+    }
+    )

@@ -1,0 +1,11 @@
+use("mongodb_inacap")
+
+db.personas.drop()
+
+db.personas.insertMany([
+    { nombre: "Any", edad: 21, estado: "ocupado", salario: 1200 },
+    { nombre: "Tony", edad: 25, estado: "ocupado", salario: 1000 },
+    { nombre: "Bobby", edad: 28, estado: "en línea", salario: 2000 },
+    { nombre: "Sonny", edad: 28, estado: "ausente", salario: 900 },
+    { nombre: "Cher", edad: 20, estado: "en línea", salario: 1300 }
+])
