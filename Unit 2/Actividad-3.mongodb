@@ -1,0 +1,113 @@
+use("mongodb_inacap")
+
+db.peliculas.drop()
+
+db.peliculas.insertMany([
+    {
+        "titulo": "Episodio I - La amenaza fantasma",
+        "escritor": ["George Lucas"],
+        "productor": ["Rick McCallum"],
+        "estreno": 1999,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio II - El ataque de los clones",
+        "escritor": ["George Lucas", "Jonathan Hales"],
+        "productor": ["Rick McCallum"],
+        "estreno": 2002,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio III - La venganza de los Sith",
+        "escritor": ["George Lucas"],
+        "productor": ["Rick McCallum"],
+        "estreno": 2005,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio IV - Una nueva esperanza",
+        "escritor": ["George Lucas"],
+        "productor": ["Gary Kurtz"],
+        "estreno": 1977,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio V - El Imperio contrataca",
+        "escritor": ["Leigh Brackett", "Lawrence Kasdan"],
+        "productor": ["Gary Kurtz"],
+        "estreno": 1980,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio VI - El retorno del Jedi",
+        "escritor": ["George Lucas", "Lawrence Kasdan"],
+        "productor": ["Howard Kazanjian"],
+        "estreno": 1983,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio VII - El despertar de la Fuerza",
+        "escritor": ["J.J. Abrams", "Lawrence Kasdan", "Michael Arndt"],
+        "productor": ["Kathleen Kennedy", "J.J. Abrams", "Bryan Burk"],
+        "estreno": 2015,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio VIII - Los últimos Jedi",
+        "escritor": ["Rian Johnson"],
+        "productor": ["Kethleen Kenndy", "Ram Bergman"],
+        "estreno": 2017,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio IX - El ascenso de Skywalker",
+        "escritor": ["Chris Terrio", "J.J. Abrams"],
+        "productor": ["Kathleen Kennedy", "J.J. Abrams", "Michelle Rejwan"],
+        "estreno": 2019,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Rogue One",
+        "escritor": ["Chris Weitz", "Tony Gilroy"],
+        "productor": ["Kathleen Kennedy", "Allison Shearmur", "Simon Emanuel"],
+        "estreno": 2016,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Han Solo",
+        "escritor": ["Jonathan Kasdan", "Lawrence Kasdan"],
+        "productor": ["Kathleen Kennedy", "Allison Shearmur", "Simon Emanuel"],
+        "estreno": 2018,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Rogue Squadron",
+        "escritor": [],
+        "productor": ["Kathleen Kennedy"],
+        "estreno": 2023,
+        "franquicia": "Star Wars"
+    }
+])
+
+db.peliculas.find()
+
+// Genere las consulta para los siguientes requerimientos
+
+//1. Mostrar los documentos cuyo escritor sea George Lucas
+use("mongodb_inacap")
+db.peliculas.find({"escritor": {$eq: "George Lucas"}})
+//2. Mostrar los documentos cuyo estreno sea 2019
+use("mongodb_inacap")
+db.peliculas.find({"estreno": {$eq: 2019}})
+//3. Mostrar los documentos cuyo estreno sea mayor a 2000
+use("mongodb_inacap")
+db.peliculas.find({"estreno": {$gt: 2000}})
+//4. Mostrar los documentos que tengan al productor Rick McCallum o a Kathleen Kennedy
+use("mongodb_inacap")
+db.peliculas.find({"productor": {$in: ["Rick McCallum","Kathleen Kennedy"]}})
+//5. Mostrar los documentos que no tengan al escritor George Lucas
+use("mongodb_inacap")
+db.peliculas.find({"escritor":{$ne: "George Lucas"}})
+//6. Mostrar los documentos que no tengan como escritores ni a J. J. Abrams ni a Lawrence Kasdan
+use("mongodb_inacap")
+db.peliculas.find({"escritor":{$nin: ["J.J. Abrams","Lawrence Kasdan"]}})

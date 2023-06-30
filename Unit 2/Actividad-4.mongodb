@@ -1,0 +1,129 @@
+use("mongodb_inacap")
+
+db.peliculas.drop()
+
+db.peliculas.insertMany([
+    {
+        "titulo": "Episodio I - La amenaza fantasma",
+        "escritor": ["George Lucas"],
+        "productor": ["Rick McCallum"],
+        "estreno": 1999,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio II - El ataque de los clones",
+        "escritor": ["George Lucas", "Jonathan Hales"],
+        "productor": ["Rick McCallum"],
+        "estreno": 2002,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio III - La venganza de los Sith",
+        "escritor": ["George Lucas"],
+        "productor": ["Rick McCallum"],
+        "estreno": 2005,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio IV - Una nueva esperanza",
+        "escritor": ["George Lucas"],
+        "productor": ["Gary Kurtz"],
+        "estreno": 1977,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio V - El Imperio contrataca",
+        "escritor": ["Leigh Brackett", "Lawrence Kasdan"],
+        "productor": ["Gary Kurtz"],
+        "estreno": 1980,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio VI - El retorno del Jedi",
+        "escritor": ["George Lucas", "Lawrence Kasdan"],
+        "productor": ["Howard Kazanjian"],
+        "estreno": 1983,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio VII - El despertar de la Fuerza",
+        "escritor": ["J.J. Abrams", "Lawrence Kasdan", "Michael Arndt"],
+        "productor": ["Kathleen Kennedy", "J.J. Abrams", "Bryan Burk"],
+        "estreno": 2015,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio VIII - Los últimos Jedi",
+        "escritor": ["Rian Johnson"],
+        "productor": ["Kethleen Kenndy", "Ram Bergman"],
+        "estreno": 2017,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio IX - El ascenso de Skywalker",
+        "escritor": ["Chris Terrio", "J.J. Abrams"],
+        "productor": ["Kathleen Kennedy", "J.J. Abrams", "Michelle Rejwan"],
+        "estreno": 2019,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Rogue One",
+        "escritor": ["Chris Weitz", "Tony Gilroy"],
+        "productor": ["Kathleen Kennedy", "Allison Shearmur", "Simon Emanuel"],
+        "estreno": 2016,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Han Solo",
+        "escritor": ["Jonathan Kasdan", "Lawrence Kasdan"],
+        "productor": ["Kathleen Kennedy", "Allison Shearmur", "Simon Emanuel"],
+        "estreno": 2018,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Rogue Squadron",
+        "escritor": [],
+        "productor": ["Kathleen Kennedy"],
+        "estreno": 2023,
+        "franquicia": "Star Wars"
+    },
+    {
+        _id: 1,
+        titulo: "Riesgo bajo cero",
+        director: "Jonathan Hensleigh",
+        estreno: 2021,
+        actores: ["Liam Neeson", "Benjamin Walker", "Laurence Fishburne"],
+        musica: "Max Aruj"
+    },
+    {
+        _id: 2,
+        titulo: "Iron Man",
+        director: "Jon Favreau",
+        estreno: 2008,
+        actores: ["Robert Downet Jr", "Terrence Howard", "Jeff Bridges", "Gwyneth Paltrow"]
+    },
+    {
+        _id: 3,
+        titulo: "Oblivion",
+        director: "Joseph Kosinki",
+        estreno: 2013, actores: ["Tom Cruise", "Olga Kurylenko", "Andrea Riseborough", "Morgan Freeman"]
+    }
+])
+
+db.peliculas.find()
+
+// a) Mostrar los documentos que tienen estrenos entre los años 1990 y 2010
+use("mongodb_inacap")
+db.peliculas.find({ $and: [{ estreno: { $gte: 1990 } }, { estreno: { $lte: 2010 } }] })
+// b) Mostrar los documentos cuya franquicia no es StarWars
+use("mongodb_inacap")
+db.peliculas.find({ $and: [{ franquicia: { $not: { $eq: "Star Wars" } } }] })
+// c) Mostrar los documentos cuyo año de estreno sea 1977 o 1999 o 2015
+use("mongodb_inacap")
+db.peliculas.find({ $or: [{ estreno: { $eq: 1977 } }, { estreno: { $eq: 1999 } }, { estreno: { $eq: 2015 } }] })
+// d) Mostrar los documentos cuyo director sea Jon Favreau sin importar el año de estreno, o que tengan como a escritor a George Lucas con estreno después del año 1980
+use("mongodb_inacap")
+db.peliculas.find({ $or: [{ director: { $eq: "Jon Favreau" } }, { $and: [{ escritor: "George Lucas" }, { estreno: { $gt: 1980 } }] }] })
+// e) Mostrar los documentos de la franquicia de StarWars que no tengan como productor a J.J. Abrams ni como escritor a Lawrence Kasdan
+use("mongodb_inacap")
+db.peliculas.find({ $and: [{ franquicia: { $eq: "Star Wars" } }, {productor: { $ne: "J.J. Abrams" } }, { escritor: { $ne: "Lawrence Kasdan" } }]})

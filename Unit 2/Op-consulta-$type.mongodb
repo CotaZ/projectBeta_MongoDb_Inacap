@@ -1,0 +1,32 @@
+//$typeselecciona documentos donde el valor del <campo> es una instancia de los tipos BSON especificados. La consulta por tipo de datos es útil cuando se trata de datos muy desestructurados en los que los tipos de datos no son predecibles.
+
+use("mongodb_inacap")
+db.libroDirecciones.drop()
+db.libroDirecciones.insertMany(
+    [
+        { _id: 1, direccion: "Avenida Argentina 2030", CP: "90698345" },
+        { _id: 2, direccion: "Lunar Alto 156", CP: 43.1 },
+        { _id: 3, direccion: "Magnolias 2324", CP: NumberLong(3921412) },
+        { _id: 4, direccion: "Circulo Marciano 55", CP: NumberInt(88602117) },
+        { _id: 5, direccion: "Via de Venus 104", CP: ["834847278", "1893289032"] }
+    ])
+
+db.libroDirecciones.find()
+
+//1. Las siguientes consultas devuelven todos los documentos donde CP es el tipo BSON cadena de caracteres string ) o es un arreglo que contiene un elemento del tipo string
+use("mongodb_inacap")
+db.libroDirecciones.find({ "CP": { $type: "string" } })
+//tabla del operador $type segun lo estudiado son 127 numeros, cada una tiene un alias como string o object o array entro otros.
+use("mongodb_inacap")
+db.libroDirecciones.find({ "CP": { $type: 2 } })
+
+//2.Las siguientes consultas devuelven todos los documentos donde CP es el tipo BSON doble o es un arreglo que contiene un elemento del tipo doble:
+use("mongodb_inacap")
+db.libroDirecciones.find({ "CP": { $type: 1 } })
+use("mongodb_inacap")
+db.libroDirecciones.find({ "CP": { $type: "double" } })
+
+//3. La siguiente consulta utiliza el alias “number”, lo que devuelve todos los documentos donde CP es el tipo BSON doble, entero o largoo es un arreglo que contiene un elemento de estos tipos:
+use("mongodb_inacap")
+db.libroDirecciones.find({ "CP": { $type: "number" } })
+

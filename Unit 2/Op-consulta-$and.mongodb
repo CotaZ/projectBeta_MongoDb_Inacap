@@ -1,0 +1,66 @@
+//$and Une las cláusulas de consulta con un AND lógico, retornando todos los documentos que coinciden con las condiciones de ambas cláusulas.
+
+use("mongodb_inacap")
+
+db.inventario.drop()
+
+db.inventario.insertMany([
+  {
+    precio: 1.99,
+    cantidad: 1,
+    venta: "calcetas"
+  },
+  {
+    precio: 2.5,
+    cantidad: 5,
+    venta: "camisetas"
+  },
+  {
+    precio: 0.99,
+    cantidad: 10,
+    venta: "calcetines"
+  },
+  {
+    precio: 5.99,
+    cantidad: 2,
+    venta: "gorras"
+  },
+  {
+    precio: 3.49,
+    cantidad: 3,
+    venta: "bufandas"
+  },
+  {
+    precio: 4.25,
+    cantidad: 8,
+    venta: "guantes"
+  },
+  {
+    precio: 6.99,
+    cantidad: 4,
+    venta: "sombreros"
+  },
+  {
+    precio: 2.99,
+    cantidad: 6,
+    venta: "calcados"
+  },
+  {
+    precio: 1.5,
+    cantidad: 12,
+    venta: "pañuelos"
+  },
+  {
+    precio: 8.75,
+    cantidad: 2,
+    venta: "abrigos"
+  }
+]);
+
+db.inventario.find()
+
+//1. Una consulta que seleccione todos los documentos de la colección inventario, donde el valor del campo precio no sea igual a 1.99 y el campo precio existe, sería:
+
+use("mongodb_inacap")
+db.inventario.find({ $and: [{precio:{$ne:8.75}}, {precio:{$exists:true}} //. { precio: { exists: true } }: Esta condición busca documentos donde el campo "precio" exista. El operador exists se utiliza para verificar si un campo existe en un documento. En este caso, se asegura de que solo se consideren los documentos que tengan el campo "precio" presente, independientemente de su valor.
+]})

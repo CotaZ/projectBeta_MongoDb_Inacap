@@ -1,0 +1,35 @@
+use("mongodb_inacap")
+
+db.grados.drop()
+db.grados.insertMany(
+    [
+        { "_id": 1, nombre: "Alice King", promedio: 87.333333333333333 },
+        { "_id": 2, nombre: "Bob Jenkins", promedio: "83.52" },
+        { "_id": 3, nombre: "Cathy Hart", promedio: "94.06" },
+        { "_id": 4, nombre: "Drew Williams", promedio: NumberInt("93") }
+    ]
+)
+db.grados.find()
+
+//1. Las siguientes consultas devuelven todos los documentos donde promedio es del tipo BSON string o double , o es una matriz que contiene un elemento de esos tipos. La primera consulta es tipo numéricos y la segundo tipo cadena.
+use("mongodb_inacap")
+db.grados.find({ "promedio": { $type: [2, 1] } })
+// Lo mismo pero con alias
+use("mongodb_inacap")
+db.grados.find({ promedio: { $type: ["string", "double"] } })
+
+
+use("mongodb_inacap")
+db.lecturaSensores.drop()
+db.lecturaSensores.insertMany([
+    { _id: 1, "lecturas ": [25, 23, ["Advertencia: ¡Temperatura alta!", 55], ["ERROR:APAGADO DEL SISTEMA!", 66]] },
+    { _id: 2, "lecturas": [25, 25, 24, 23] },
+    { _id: 3, "lecturas": [22, 24] },
+    { _id: 4, "lecturas": [] },
+    { _id: 5, "lecturas": 24 }
+])
+db.lecturaSensores.find()
+
+//1. La siguiente consulta devuelve cualquier documento en el que el campo lecturas sea un arreglo, vacía o no vacía.
+use("mongodb_inacap")
+db.lecturaSensores.find({ "lecturas": { $type: 4 } })

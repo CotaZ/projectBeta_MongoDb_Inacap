@@ -1,0 +1,16 @@
+//Cuando el valor de $existses el <booleano> true, entonces de devuelven los documentos que contienen el campo, incluso para aquellos documentos donde el valor del campo es null. Si el <booleano>es false, la consulta devuelve solo los documentos que no contienen el campo
+
+use("mongodb_inacap")
+db.inventario.drop()
+
+db.inventario.insertMany([
+    { articulo: "nueces", cantidad: 30, transportista: { nombre: "ValpoShip", tarifa: 3 } },
+    { articulo: "pernos", cantidad: 50, transportista: { nombre: "ValpoShip", tarifa: 4 } },
+    { articulo: "arandelas", cantidad: 10, transportista: { nombre: "ValpoShip", tarifa: 5 } }
+])
+
+db.inventario.find ()
+
+use("mongodb_inacap")
+db.inventario.find( { cantidad: { $exists: true, $nin: [ 30, 50 ] } } )
+//Esta consulta seleccionará todos los documentos de la colección inventario donde existe el campo cantidad y su valor no es igual 30 o 50.

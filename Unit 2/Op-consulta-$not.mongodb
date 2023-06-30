@@ -1,0 +1,67 @@
+//$not Invierte el efecto de una expresión de consulta y devuelve documentos que no coinciden con la expresión de consulta.
+
+use("mongodb_inacap")
+
+db.inventario.drop()
+
+db.inventario.insertMany([
+    {
+        precio: 1.99,
+        cantidad: 1,
+        venta: "calcetas"
+    },
+    {
+        precio: 2.5,
+        cantidad: 5,
+        venta: "camisetas"
+    },
+    {
+        precio: 0.99,
+        cantidad: 10,
+        venta: "calcetines"
+    },
+    {
+        precio: 5.99,
+        cantidad: 2,
+        venta: "gorras"
+    },
+    {
+        precio: 4.75,
+        cantidad: 8,
+        venta: "pantalones"
+    },
+    {
+        precio: 3.25,
+        cantidad: 3,
+        venta: "bufandas"
+    },
+    {
+        precio: 9.99,
+        cantidad: 15,
+        venta: "zapatos"
+    },
+    {
+        precio: 0.5,
+        cantidad: 20,
+        venta: "calcetines cortos"
+    },
+    {
+        precio: 12.99,
+        cantidad: 4,
+        venta: "chaquetas"
+    },
+    {
+        precio: 7.49,
+        cantidad: 6,
+        venta: "sombreros"
+    }
+])
+
+db.inventario.find()
+
+//1. seleccionará todos los documentos de la colección inventario donde:
+// • el valor del campo precio es menor o igual que 4 
+// • el campo precio no existe
+use("mongodb_inacap")
+db.inventario.find({precio: {$not: {$eq:7.49}}})
+
