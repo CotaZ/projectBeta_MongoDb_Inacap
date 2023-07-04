@@ -1,0 +1,37 @@
+// Ejercicios.
+// 1) Contabilizar las películas que tienen el campo “ musica ”.
+use("mongodb_inacap")
+db.peliculas.find({ musica: /M/i}).count
+// 2) mostrar las películas que no son de la franquicia Star Wars , ordenadas en forma ascendente por título.
+use("mongodb_inacap")
+db.peliculas.find({ franquicia: {$ne: "Star Wars"}},{_id:0, titulo:1}).sort({titulo:1})
+// 3) Mostrar las películas y estreno cuyo título no tiene la palabra "de" o "De", ordenados en forma descendente por título.
+use("mongodb_inacap")
+db.peliculas.find({ titulo: {$not: /de/i}},{_id:0, titulo:1, estreno:1}).sort({titulo:-1})
+// 4) Mostrar las películas de los últimos 3 años de estreno.
+use("mongodb_inacap")
+var currentYear = new Date().getFullYear();
+var startYear = currentYear -3;
+
+db.peliculas.find({ estreno: { $gte: startYear } }, { _id: 0, estreno: 1, titulo: 1 }).sort({ estreno: 1 }).limit(3)
+
+// 5) Mostrar las 2 primeras películas producidas por Kathleen Kennedy
+use("mongodb_inacap")
+db.peliculas.aggregate([
+    { $match: { productor: "Kathleen Kennedy" } },
+    { $sort: {estreno:1}},
+    { $limit: 2 },
+    { $project: { _id: 0, titulo: 1, estreno: 1, productor: "Kathleen Kennedy" } }
+  ])
+
+//   En este código, se utiliza la función aggregate() para realizar una agregación en la colección "peliculas". Luego, se utilizan tres etapas de agregación:
+
+//   $match: Filtra los documentos para que solo se consideren aquellos en los que el campo "productor" sea igual a "Kathleen Kennedy".
+
+// $sort: Para filtrar el orden si fuese asccendete o descendente
+  
+//   $limit: Limita el resultado a solo las 2 primeras películas que cumplen la condición del paso anterior.
+  
+//   $project: Proyecta los campos deseados en la salida. En este caso, se incluyen los campos "titulo" y "estreno", y el campo "productor" se establece explícitamente como "Kathleen Kennedy".
+
+

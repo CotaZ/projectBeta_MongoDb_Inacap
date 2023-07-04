@@ -1,0 +1,144 @@
+// •Esta instrucción reemplaza un documento completo por otro especificado en el 2 argumento, el cual representa un documento en formato JSON.
+// •Los campos del documento original se pierden y son reemplazados por los campos indicados en el 2 argumento (excepto el _id).
+// •El 2argumento no puede contener operadores de actualización, por ej : $set
+
+use("mongodb_inacap")
+
+db.peliculas.drop()
+
+db.peliculas.insertMany([
+    {
+        "titulo": "Episodio I - La amenaza fantasma",
+        "escritor": ["George Lucas"],
+        "productor": ["Rick McCallum"],
+        "estreno": 1999,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio II - El ataque de los clones",
+        "escritor": ["George Lucas", "Jonathan Hales"],
+        "productor": ["Rick McCallum"],
+        "estreno": 2002,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio III - La venganza de los Sith",
+        "escritor": ["George Lucas"],
+        "productor": ["Rick McCallum"],
+        "estreno": 2005,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio IV - Una nueva esperanza",
+        "escritor": ["George Lucas"],
+        "productor": ["Gary Kurtz"],
+        "estreno": 1977,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio V - El Imperio contrataca",
+        "escritor": ["Leigh Brackett", "Lawrence Kasdan"],
+        "productor": ["Gary Kurtz"],
+        "estreno": 1980,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio VI - El retorno del Jedi",
+        "escritor": ["George Lucas", "Lawrence Kasdan"],
+        "productor": ["Howard Kazanjian"],
+        "estreno": 1983,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio VII - El despertar de la Fuerza",
+        "escritor": ["J.J. Abrams", "Lawrence Kasdan", "Michael Arndt"],
+        "productor": ["Kathleen Kennedy", "J.J. Abrams", "Bryan Burk"],
+        "estreno": 2015,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio VIII - Los últimos Jedi",
+        "escritor": ["Rian Johnson"],
+        "productor": ["Kethleen Kenndy", "Ram Bergman"],
+        "estreno": 2017,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Episodio IX - El ascenso de Skywalker",
+        "escritor": ["Chris Terrio", "J.J. Abrams"],
+        "productor": ["Kathleen Kennedy", "J.J. Abrams", "Michelle Rejwan"],
+        "estreno": 2019,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Rogue One",
+        "escritor": ["Chris Weitz", "Tony Gilroy"],
+        "productor": ["Kathleen Kennedy", "Allison Shearmur", "Simon Emanuel"],
+        "estreno": 2016,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Han Solo",
+        "escritor": ["Jonathan Kasdan", "Lawrence Kasdan"],
+        "productor": ["Kathleen Kennedy", "Allison Shearmur", "Simon Emanuel"],
+        "estreno": 2018,
+        "franquicia": "Star Wars"
+    },
+    {
+        "titulo": "Rogue Squadron",
+        "escritor": [],
+        "productor": ["Kathleen Kennedy"],
+        "estreno": 2023,
+        "franquicia": "Star Wars"
+    },
+    {
+        _id: 1,
+        titulo: "Riesgo bajo cero",
+        director: "Jonathan Hensleigh",
+        estreno: 2021,
+        actores: ["Liam Neeson", "Benjamin Walker", "Laurence Fishburne"],
+        musica: "Max Aruj"
+    },
+    {
+        _id: 2,
+        titulo: "Iron Man",
+        director: "Jon Favreau",
+        estreno: 2008,
+        actores: ["Robert Downet Jr", "Terrence Howard", "Jeff Bridges", "Gwyneth Paltrow"]
+    },
+    {
+        _id: 3,
+        titulo: "Oblivion",
+        director: "Joseph Kosinki",
+        estreno: 2013, actores: ["Tom Cruise", "Olga Kurylenko", "Andrea Riseborough", "Morgan Freeman"]
+    }
+])
+
+db.peliculas.find()
+
+// replaceOne debe modificar el _id con todos sus documentos, por ende este codigo si no se hace de esta misma forma borra los anteriores datos 
+use("mongodb_inacap")
+db.peliculas.replaceOne(
+    {_id:2},
+    {titulo: "Iron Man 1",
+    director: "Jon Favreau X.",
+    estreno: 2008,
+    actores: ["Robert Downet Jr", "Terrence Howard", "Jeff Bridges", "Gwyneth Paltrow", "Luis Álvarez"]}
+    )
+db.peliculas.find() 
+
+// updateOne debe incluir ningun archivo y aunque este se repita no modifica los datos por lo que no genera ningun error y omite, para seguir agregando documentos y datos.
+ use("mongodb_inacap")
+ db.peliculas.updateOne({_id:2}, {$set: {director: "Don Clicli"}})
+ db.peliculas.find() 
+
+ // updateMany podemos agregar a todos los documentos una nueva lista
+ use("mongodb_inacap")
+ db.peliculas.updateMany({},{$set:{estrella: "Luis Álvarez"}})
+ db.peliculas.find() 
+
+ // updateMany puede actualizar la misma lista con los mismo datos si se repiten
+
+ use("mongodb_inacap")
+ db.peliculas.updateMany({estrella: "Luis Álvarez"}, {$set: {estrella: "Luis Francisco Álvarez Gómez"}})
+ db.peliculas.find() 

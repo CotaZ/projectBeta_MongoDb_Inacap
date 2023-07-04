@@ -1,0 +1,13 @@
+// Ejercicios.
+// • Mostrar la cantidad de películas de la franquicia Star Wars
+use("mongodb_inacap")
+db.peliculas.find({franquicia: "Star Wars"}, {_id:0, titulo:1, franquicia:1}).count()
+// • Mostrar las primeras 3 películas de la franquicia Star Wars
+use("mongodb_inacap")
+db.peliculas.find({franquicia: "Star Wars"}, {_id:0, titulo:1, franquicia:1}).limit(3)
+// • Mostrar las primeras 3 películas de la franquicia Star Wars , ordenadas por el año de estreno
+use("mongodb_inacap")
+db.peliculas.find({franquicia: "Star Wars"}, {_id:0, titulo:1, estreno:1,franquicia:1}).sort({estreno:1}).limit(3)
+// • Contabilizar las películas cuyo título contiene la palabra “La”
+use("mongodb_inacap")
+db.peliculas.find({titulo: {$regex: /La/}}).count()

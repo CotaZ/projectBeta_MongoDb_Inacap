@@ -5,12 +5,7 @@
 // 1. Mostrar el primer actor de la película “Trafc in Souls”.
 use("mongodb_inacap")
 db.movies.findOne({
-    title: "Traffic in Souls"
-}, {
-    cast: {
-        $slice: 1
-    }
-})
+    title: "Traffic in Souls"},{ cast: {$slice: 1}})
 
 // 2. Mostrar el último actor de la película “Trafc in Souls”.
 use("mongodb_inacap")

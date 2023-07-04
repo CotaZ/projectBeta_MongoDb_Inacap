@@ -1,0 +1,57 @@
+//En MongoDB, la expresión regular $regex es un operador utilizado para realizar consultas basadas en patrones de coincidencia en campos de texto. Permite buscar documentos en una colección que contengan valores que se ajusten a un patrón específico definido mediante una expresión regular.
+
+use("mongodb_inacap")
+
+db.products.drop()
+db.products.insertMany([
+    { _id: 100, sku: "abc123", description: "Single line description." },
+    { _id: 101, sku: "abc789", description: "First line\nSecond line" },
+    { _id: 102, sku: "xyz456", description: "Many spaces before     line" },
+    { _id: 103, sku: "xyz789", description: "Multiple\nline description" },
+    { _id: 104, sku: "Abc789", description: "SKU starts with A" }
+])
+db.products.find()
+
+//1. El siguiente ejemplo coincide con todos los documentos donde el campo sku es como en SQL "%789": significa que (Termina con 789)
+// El patrón $ indica final de línea
+use("mongodb_inacap")
+db.products.find({ sku: { $regex: /789$/ } })
+
+//2. El siguiente ejemplo utiliza la opción i para una coincidencia que no distingue entre mayúsculas y minúsculas para documentos con un valor de sku que comienza con ABC.
+
+//Insensibilidad a mayúsculas y minúsculas para que coincida con mayúsculas y minúsculas. Para ver un ejemplo, véase Realice coincidencias de expresiones regulares que no distinguen entre mayúsculas y minúsculas .
+// El patrón ^ indica inicio de línea
+// La opción i indica que no distingue mayúsculas de minúsculas
+use("mongodb_inacap")
+db.products.find({ sku: { $regex: /^ABC/i } })
+
+//3. El siguiente ejemplo utiliza la opción m para hacer coincidir líneas que comienzan con la letra M para cadenas de varias líneas:
+
+//Para patrones que incluyen anclas (es decir, ^para el inicio, $para el final), haga coincidir el principio o el final de cada línea para cadenas con valores de varias líneas. Sin esta opción, estos anclajes coinciden al principio o al final de la cadena. 
+// Sin la opción m, la consulta coincidiría solo con el primer documento
+// El patrón ^ indica inicio de línea
+// La opción m indica que el patrón aplica en múltiples líneas (/n quiere decir que hay una doble linea)
+use("mongodb_inacap")
+db.products.find({ description: { $regex: /^S/, $options: 'm' } })
+
+//4. Si el $regex patrón no contiene un ancla, el patrón coincide con la cadena como un todo, como en el siguiente ejemplo:
+use("mongodb_inacap")
+db.products.find({ description: { $regex: /S/}})
+
+//5. El siguiente ejemplo utiliza la sopción para permitir que el carácter de punto (es decir ., ) coincida con todos los caracteres, incluida la nueva línea, así como la iopción de realizar una coincidencia que no distingue entre mayúsculas y minúsculas
+use("mongodb_inacap")
+db.products.find({ description: {$regex: /m.*line/, $options: 'si'}})
+//si= quiere decir que es opcional, quiere decir que coicidera con la busquedad del array en 'M', donde 's' coincidera con el . ademas con caracteres de nueva linea, y 'i' indica que la busqueda debe ser insensible a las mayusculas y minusculas. Ejemplo sin 's', se van los arrays con lineas.
+use("mongodb_inacap")
+db.products.find({ description: {$regex: /m.*line/, $options: 'i'}})
+
+//6. Ignorar los espacios en blanco en el patrón: El siguiente ejemplo usa la xopción ignorar los espacios en blanco y los comentarios, denotados por #y que terminan con \nen el patrón coincidente:
+use("mongodb_inacap")
+var pattern = "abc #category code\n123 #item number"
+db.products.find( { sku: { $regex: pattern, $options: "x" } } )
+
+// Use una expresión regular para hacer coincidir mayúsculas y minúsculas en cadenas El siguiente ejemplo usa la expresión regular "(?i)a(?-i)bc"para hacer coincidir skucadenas de campo que contienen: "abc" p "ABC"
+use("mongodb_inacap")
+db.products.find({sku: {$regex: "(?i)a(?-i)bc"}})
+
+
