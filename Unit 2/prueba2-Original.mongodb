@@ -1,0 +1,65 @@
+// Mostrar las compañías que tengan oficinas (subdocumento offices) en "CHL", "COL", "ECU" (country_code), pero que no tengan oficinas en "ARG", "CHN", "IND".
+use("mongodb_inacap")
+db.companies.find({ $and: [{ "offices.country_code": { $in: ["CHL", "COL", "ECU"] } }, { "offices.country_code": { $nin: ["ARG", "CHN", "IND"] } }] }, { "offices.country_code": 1, _id: 1 })
+
+// Mostrar las compañías que en su descripción (description) y en su resumen (overview), contengan la palabra "company", y que hayan sido fundadas entre los años 1900 y 1950 (founded_year) ....
+use("mongodb_inacap")
+db.companies.find({ $and: [{ description: { $regex: /company/i }, overview: { $regex: /company/i }, founded_year: { $gte: 1900, $lte: 1950 } }] }, { _id: 0, description: 1, overview: 1, founded_year: 1 })
+
+// Mostrar las compañías que sean de categoría "hardware" o "software" (category_code), que no tengan oficinas (subdocumento offices) en las ciudades (city) cuyo nombre empiece con "A" ni cuyo año de fundación (founded_year) sea posterior al año 1960 (no incluir años = null) ...
+use("mongodb_inacap")
+db.companies.find({ $and: [{ category_code: { $in: ["hardware", "software"] } }, { $nor: [{ "offices.city": /^A/i }, { founded_year: { $gte: 1960 } }] }, { founded_year: { $not: { $eq: null } } }] }, { _id: 0, name: 1, category_code: 1, "offices.city:1": 1, founded_year: 1 })
+
+// Mostrar las compañías que no hayan sido fundadas (founded_year) en el año 2005, ni hayan sido creadas (created_at) en un día Sábado o Domingo. Obviar las compañías con datos nulos, o que no contengan tales campos.
+use("mongodb_inacap")
+db.companies.find({ $nor: [{ founded_year: 2005 }, { created_at: { $in: [/^sat|^sun/i] } }, { founded_year: null }, { created_at: null }, { founded_year: { $exists: false } }, { created_at: { $exists: false } }] }, { _id: 0, founded_year: 1, created_at: 1, name: 1 }).count()
+
+// Mostrar las compañías cuyo sitio web (homepage_url) no sea de un dominio ".com" Obviar aquellas compañías que tengan valores nulos o vacíos ("") en su sitio web ... 
+use("mongodb_inacap")
+db.companies.find({ homepage_url: { $nin: [/.com$/i, null, ""] } }, { _id: 0, name: 1, homepage_url: 1 }).count()
+
+// Mostrar las compañías que entre sus proveedores (providerships) aparezca la empresa "Amazon". Y que tengan más de 25 empleados (number_of_employees), o menos de 5 empleados (no incluir aquellas con 0 empleados)
+use("mongodb_inacap")
+db.companies.find({ $and: [{ $or: [{ number_of_employees: { $gte: 25 } }, { number_of_employees: { $lte: 5 } }] }, { number_of_employees: { $ne: 0 } }, { "providerships.provider.name": /amazon/i }] }, { "providerships.provider.name": 1, number_of_employees: 1, _id: 0, name: 1 }).count()
+
+//*** CRUD ***
+
+// Para las compañías que tengan un monto de precio (acquisition_price_amount) null o menor que 100000 (subdocumento "acquisition"), agregar un campo dentro del mismo subdocumento, con nombre "categoria" y valor "mipyme". No incluir documentos que no tengan el subcampo "acquisition_price_amount" ...
+use("mongodb_inacap")
+db.companies.find({
+    $or: [{ "acquisition.price_amount": { $lt: 100000 } },
+    {
+        $and: [{ "acquisition.price_amount": null },
+        { "acquisition.price_amount": { $exists: true } }]
+    }]
+},
+    { "acquisition.price_amount": 1 })
+
+db.companies.updateMany({
+    $or: [{ "acquisition.price_amount": { $lt: 100000 } },
+    {
+        $and: [{ "acquisition.price_amount": null },
+        { "acquisition.price_amount": { $exists: true } }]
+    }]
+},
+    { $set: { "acquisition.categoria": "mipyme" } })
+
+// Para las compañías que tengan una cantidad de empleados (number_of_employees) mayor que 100.000 y el campo blog_url vacío (""), eliminar los campos blog_url y blog_feed_url ...
+use("mongodb_inacap")
+db.companies.find({ number_of_employees: { $gt: 100000 }, blog_url: "" }, { number_of_employees: 1, blog_url: 1, name: 1 })
+
+db.companies.updateMany({ number_of_employees: { $gt: 100000 }, blog_url: "" }, { $unset: { blog_url: "", blog_feed_url: "" } })
+
+// Para las compañías que fueron fundadas en mayo del año 2000 (founded_year, founded_month), y que tengan el día nulo (founded_day), asignar la fecha actual al campo "actualizacion", en formato Date..
+use("mongodb_inacap")
+db.companies.find({ founded_year: 2000, founded_month: 6, founded_day: {$eq: null}}, {founded_day:1, founded_month:1, founded_year:1, _id:0, name:1}).count()
+db.companies.updateMany({founded_year:2000, founded_month:6, founded_day:{$eq:null}}, {$currentDate:{fecha_actual:true}})
+db.companies.updateMany({founded_year:2000, founded_month:6, founded_day:{$eq:null}}, {$currentDate:{fecha_actual:true}})
+
+// Para las compañías que fueron fundadas (founded_year) entre los años 1830 y 1850 (ambos inclusive), asignar el valor "Sin Socios" al campo "partners" ... 
+use("mongodb_inacap")
+db.companies.find({ founded_year: {$gte:1830, $lte:1850}}, {founded_year:1, _id:0, name:1, partners:1}).count()
+
+db.companies.updateMany({ founded_year: {$gte:1830, $lte:1850}}, {$set: {partners: "Sin Socios"}})
+
+

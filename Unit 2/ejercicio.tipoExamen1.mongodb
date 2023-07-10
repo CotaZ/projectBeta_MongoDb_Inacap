@@ -1,0 +1,74 @@
+//• En interfaz Compass importar datos adjuntos en la colección “movies”.
+// • Responder las siguientes consultas y registrar las instrucciones ejecutadas en un informe de trabajo.
+// Dicho informe se debe subir en formato PDF al enlace de la actividad, indicando claramente el nombre de los integrantes del grupo de trabajo, las instrucciones de consulta y los resultados obtenidos:
+// • Enlace descarga dataset →
+// https://inacapmailcl-my.sharepoint.com/:u:/g/personal/alberto_marambio02_inacapmail_cl/EZpyRKJho5dPrnF1ZnI96bgBU8G5GVIjnEyrnSYuZJTkng?e=P0D61W
+
+use("mongodb_inacap")
+db.movies.find()
+
+// CONSULTAS:
+// 1. Mostrar las películas de años anteriores a 1950, en cuya descripción resumida (campo “plot”) aparece la palabra “bandit”.
+use("mongodb_inacap")
+db.movies.find({
+    "year": { $lt: 1950 },
+    "plot": { $regex: "bandit", "$options": "i" }
+})
+// 2. Mostrar las películas filmadas en “USA” entre los años 1950 y 1956 (ambos inclusive), de género “Western” con actores de nombre o apellido “John”. Utilizar AND implícito.
+use("mongodb_inacap")
+db.movies.find({
+    "countries": "USA",
+    "year": { $gte: 1950, $lte: 1956 },
+    "genres": { $eq: "Western" },
+    "cast": { $regex: "John", $options: "i" }
+}).count()
+// 3. Ídem consulta (2), utilizando AND explícito.
+use("mongodb_inacap")
+db.movies.find({
+    $and: [{
+        "countries": "USA",
+        "year": { $gte: 1950, $lte: 1956 },
+        "genres": { $eq: "Western" },
+        "cast": { $regex: "John", $options: "i" }
+    }]
+}).count()
+// 4. Mostrar las series anteriores al año 1990, cuyo género sea “Musical”, o “Adventure”. Utilizar operador “$or”.
+use("mongodb_inacap")
+db.movies.find({
+    $or: [{ "year": { $lt: 1990 } }, { "genres": "Musical" }, { "genres": "Adventure" }]
+})
+// 5. Ídem consulta (5). Utilizar operador “$in”.
+use("mongodb_inacap")
+db.movies.find({ "year": { "$lt": 1990 }, "genres": { "$in": ["Musical", "Adventure"] } })
+// 6. Mostrar las películas en que actuaron Humphrey Bogart y Lauren Bacall.
+use("mongodb_inacap")
+db.movies.find({ $and: [{ "cast": "Humphrey Bogart" }, { "cast": "Lauren Bacall" }] }).count()
+db.movies.find({ "cast": { $all: ["Humphrey Bogart", "Lauren Bacall"] } }).count()
+// 7. Mostrar las películas producidas por “Warner” y que fueron estrenadas (campo "released") entre los años 1920 y 1930 (omitir documentos que no tengan el campo “released”), utilizar AND implícito.
+// 8. Ídem consulta (7), utilizando AND explícito.
+use("mongodb_inacap")
+db.movies.find()
+// 9. Mostrar la películas producidas por “Miramax”, antes del año 1970 o después del año 2008, ordenadas por el año en forma descendente.
+use("mongodb_inacap")
+db.movies.find({"directors": "Miramax"})
+
+
+// 10. Mostrar las series que tengan un rating igual o superior a 9 y que no sean del genero “Documentary” ni “History”. Utilizar AND implícito.
+use("mongodb_inacap")
+db.movies.find({
+    "imdb.rating": { "$gte": 9 },
+    "genres": { "$nin": ["Documentary", "History"] }
+  })
+  
+// 11. Ídem consulta (10). Utilizar AND explícito.
+use("mongodb_inacap")
+db.movies.find({
+    $and: [
+      { "imdb.rating": { $gte: 9 } },
+      { genres: { $nin: ["Documentary", "History"] } }
+    ]
+  })  
+// 12. Mostrar las películas que en su resumen (campo plot), tengan las palabras “man” o “woman” y que no sean de años anteriores a 1920, ni posteriores a 1925.
+use("mongodb_inacap")
+db.movies.find({ $and: [{plot: { $regex: /\b(man|woman)\b/i}}, {year: {$gte: 1920, $lte: 1925}}]
+}).count()

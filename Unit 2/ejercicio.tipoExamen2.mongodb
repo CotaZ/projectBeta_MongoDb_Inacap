@@ -1,0 +1,46 @@
+// En interfaz Compass importar datos adjuntos en la colección “movies”.
+// • Responder las siguientes consultas y registrar las instrucciones ejecutadas en un informe de trabajo.Dicho informe se debe subir en formato PDF al enlace de la actividad, indicando claramente el nombre
+// de los integrantes del grupo de trabajo, las instrucciones de consulta y los resultados obtenidos:
+// • Enlace descarga dataset → https://inacapmailclmy.sharepoint.com/:u:/g/personal/alberto_marambio02_inacapmail_cl/EZpyRKJho5dPrnF1ZnI96bgBU8G5GVIjnEyrnSYuZJTkng?e=P0D61W
+// Antes de hacer las modifcaciones, verifcar los valores actuales de los documentos que calzarán con el criterio de selección. Luego de ejecutar la instrucción, revisar el mensaje de confrmación del servidor y verifcar los nuevos valores de los documentos actualizados.
+use("mongodb_inacap")
+db.movies.find()
+
+// 1. Contabilizar cuántos documentos corresponden a series.
+use("mongodb_inacap")
+db.movies.count({ type: "series" })
+// 2. Para los documentos tipo "series", agregar campo "valor_arriendo" = 2400.
+use("mongodb_inacap")
+db.movies.updateMany({ type: "series" }, { $set: { "valor_arriendo": 2400 } })
+db.movies.find({ type: "series" })
+// 3. Para las series cuyo país no sea "USA" ni "UK", aumentar el valor del arriendo en 16%.
+use("mongodb_inacap")
+db.movies.updateMany({ type: "series", countries: { $nin: ["USA", "UK"] } }, { $mul: { valor_arriendo: 1.16 } })
+db.movies.find({ type: "series", countries: { $nin: ["USA", "UK"] } })
+// 4. Para las series cuyo país sea "UK" disminuir el valor_arriendo en 600.
+use("mongodb_inacap")
+db.movies.updateMany({ type: "series", countries: "UK" }, { $inc: { valor_arriendo: -600 } })
+db.movies.find({ type: "series", countries: "UK" })
+// 5. Para todos los documentos, renombrar el campo “countries” a “paises” (no acentuar).
+use("mongodb_inacap")
+db.movies.updateMany({}, { $rename: { "countries": "paises" } })
+// 6. Para los documentos que no tengan el campo "languages", agregar dicho campo con valor "indefnido" (como arreglo), más el campo "actualizado" con valor el nombre de la persona que ejecutó la instrucción.
+use("mongodb_inacap")
+db.movies.updateMany({ languages: { $exists: false } }, { $set: { languajes: ["indefinido"], actualizado: "Nombre de la persona" } })
+db.movies.find({ languajes: "indefinido" })
+// 7. Para todas las películas de USA, si nominaciones = 0 y premios > 15, agregar un campo "tomatoes.viewer.comentario" = "Reconsiderar nominaciones".
+use("mongodb_inacap")
+db.movies.updateMany({ countries: "USA", "awards.nominations": 0, "awards.wins": { $gt: 15 } }, { $set: { "tomatoes.viewer.comentario": "Reconsiderar nominaciones" } })
+db.movies.find({ "awards.nominations": 0 })
+// 8. Para los documentos cuyo género (genres) contenga los valores "Short" y "Western", crear un campo tipo arreglo "genres_esp" con valores "Cortometraje" y "Medioeste".
+use("mongodb_inacap")
+db.movies.updateMany({ genres: { $all: ["Short", "Western"] } }, { $set: { genres_esp: ["Cortometraje", "Medioeste"] } })
+db.movies.find({ genres: ["Cortometraje", "Medioeste"] })
+// 9. Para los documentos tipo series, que no contengan los campos: "rated", "num_mfii_comments" ni "poster", asignar la cantidad maxima para el campo "runtime" a 72.
+use("mongodb_inacap")
+db.movies.updateMany({ type: "series", rated: { $exists: false }, num_mflix_comments: { $exists: false }, poster: { $exists: false } }, { $max: { runtime: 72 } })
+db.movies.find({ runtime: 72 })
+// 10. Para los documentos que tengan más de 1.000.000 de votos (campo "imdb.votes"); agregar un subdocumento de nombre "comentario" en el campo "imdb". El subdocumento debe tener los siguientes campos: premio = "Premio un millón", fecha = fecha actual.
+use("mongodb_inacap")
+db.movies.updateMany({ "imdb.votes": { $gt: 1000000 } }, { $set: { "imdb.comentario": { premio: "Premio un millón", fecha: new Date() } } })
+db.movies.find({"imdb.votes": {$gt: 1000000}})

@@ -119,26 +119,50 @@ db.peliculas.find()
 // replaceOne debe modificar el _id con todos sus documentos, por ende este codigo si no se hace de esta misma forma borra los anteriores datos 
 use("mongodb_inacap")
 db.peliculas.replaceOne(
-    {_id:2},
-    {titulo: "Iron Man 1",
-    director: "Jon Favreau X.",
-    estreno: 2008,
-    actores: ["Robert Downet Jr", "Terrence Howard", "Jeff Bridges", "Gwyneth Paltrow", "Luis Álvarez"]}
-    )
-db.peliculas.find() 
+    { _id: 2 },
+    {
+        titulo: "Iron Man 1",
+        director: "Jon Favreau X.",
+        estreno: 2008,
+        actores: ["Robert Downet Jr", "Terrence Howard", "Jeff Bridges", "Gwyneth Paltrow", "Luis Álvarez"]
+    }
+)
+db.peliculas.find()
 
 // updateOne debe incluir ningun archivo y aunque este se repita no modifica los datos por lo que no genera ningun error y omite, para seguir agregando documentos y datos.
- use("mongodb_inacap")
- db.peliculas.updateOne({_id:2}, {$set: {director: "Don Clicli"}})
- db.peliculas.find() 
+use("mongodb_inacap")
+db.peliculas.updateOne({ _id: 2 }, { $set: { director: "Don Clicli" } })
+db.peliculas.find()
 
- // updateMany podemos agregar a todos los documentos una nueva lista
- use("mongodb_inacap")
- db.peliculas.updateMany({},{$set:{estrella: "Luis Álvarez"}})
- db.peliculas.find() 
+// updateMany podemos agregar a todos los documentos una nueva lista
+use("mongodb_inacap")
+db.peliculas.updateMany({}, { $set: { estrella: "Luis Álvarez" } })
+db.peliculas.find()
 
- // updateMany puede actualizar la misma lista con los mismo datos si se repiten
+// updateMany puede actualizar la misma lista con los mismo datos si se repiten
 
- use("mongodb_inacap")
- db.peliculas.updateMany({estrella: "Luis Álvarez"}, {$set: {estrella: "Luis Francisco Álvarez Gómez"}})
- db.peliculas.find() 
+use("mongodb_inacap")
+db.peliculas.updateMany({ estrella: "Luis Álvarez" }, { $set: { estrella: "Luis Francisco Álvarez Gómez" } })
+db.peliculas.find()
+
+// el comando $setOnInsert es una instruccion de update con una opcion upsert:true, que inserta documento nuevo dentro la ficha
+
+use("mongodb_inacap")
+db.peliculas.updateOne({ _id: 2 }, {
+    $set: {
+        titulo: "Iron Man 1",
+        director: "Jon Favreau X.",
+        estreno: 2008,
+        actores: ["Robert Downet Jr", "Terrence Howard", "Jeff Bridges", "Gwyneth Paltrow", "Luis Álvarez"]
+    }
+},
+    {
+        $setOnInsert: {
+            boletos: ["oro", "plata", "bronce"],
+            precios: 200
+        }
+    },
+    { upsert: true }
+)
+
+db.peliculas.find()

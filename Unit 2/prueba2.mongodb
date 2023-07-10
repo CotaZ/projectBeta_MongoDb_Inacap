@@ -1,0 +1,153 @@
+// • Descargar archivo JSON desde enlace adjunto (datos de hospedajes para turismo).
+// • En interfaz Compass importar datos descargados en la colección “airbnb”.
+// • Responder las siguientes preguntas y registrar las instrucciones ejecutadas en un archivo de texto plano, identifcando claramente el Nº de la pregunta respectiva.
+// • Subir archivo de respuestas al enlace de la evaluación 2.
+// • Grabar frecuentemente archivo de respuestas en unidad Z, para evitar pérdidas por cortes de energía.
+// • Califcación porcentual, 60% = nota 4,,0.
+// • Durante la evaluación se puede consultar la documentación en línea de MongoDB → https://www.mongodb.com/docs/manual/
+// • El uso de audífonos o similares está prohibido.
+// • Enlace descarga dataset “airbnb” → https://inacapmailclmy.sharepoint.com/:u:/g/personal/alberto_marambio02_inacapmail_cl/EV4,uwJZr8phAly8Gn9o85KkBaD3EEXbPCKGrZLqqTvuefw?e=JbhbnE
+// • Instrucciones en una sola línea o sin indentación en sus argumentos, descuentan la mitad del puntaje.
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// DESCRIPCIÓN DE CAMPOS:
+// • name → nombre del hospedaje.
+// • summary → descripción resumida del hospedaje
+// • property_type → tipo de propiedad
+// • room_type → tipo de habitación
+// • bed_type → tipo de camas
+// • accommodates → capacidad (personas)
+// • bedrooms → cantidad de dormitorios
+// • bathrooms → cantidad de baños
+// • beds → cantidad de camas
+// • house_rules → reglas del hospedaje
+// • last_scraped → fecha del último reclamo
+// • amenities → servicios / comodidades
+// • cleaning_fee → tarifa por limpieza
+// • availability → disponibilidad
+// • address → dirección
+// • reviews → revisiones / comentarios
+// • number_of_reviews → cantidad de revisiones / comentarios
+// • price → precio / tarifa
+// • minimum_nights → cantidad mínima de noches a reservar
+// • maximum_nights → cantidad máxima de noches a reservar
+// • listing_url → sitio web del hospedaje
+
+use("mongodb_inacap")
+db.airbnb.find()
+
+// 1. Mostrar el nombre de los hospedajes en casas (property_type=”House”), con capacidad (accommodates) para más de 15 personas, incluir el sitio web respectivo.
+use("mongodb_inacap")
+db.airbnb.find({ $and: [{ property_type: "House" }, { accommodates: { $gt: 15 } }] }, { name: 1, accommodates: 1, listing_url: 1, property_type: 1 })
+// 2. Contabilizar los hoteles (property_type=”Hotel”) que tengan tipos de camas “Real Bed”.
+use("mongodb_inacap")
+db.airbnb.find({ $and: [{ property_type: "Hotel", bed_type: "Real Bed", beds: { $gte: 0 } }] }, { property_type: 1, bed_type: 1, beds: 1 }).count()
+// 3. Mostrar los nombres de hospedajes con tipos de habitación “Shared room”, que tengan 20 o más comentarios / revisiones y cuyo último reclamo sea posterior o igual al 8 de marzo de 2019.
+use("mongodb_inacap")
+db.airbnb.find({ room_type: "Shared room", number_of_reviews: { $gte: 20 }, last_scraped: { $gte: ISODate("2019-03-08") } }, { name: 1, room_type: 1, last_scraped: 1, number_of_reviews: 1 })
+// 4,. Mostrar los nombres de hospedajes que no estén ubicados en el país “United States” y que en su descripción resumida contengan las palabras “historic area” o “botanical garden”.
+use("mongodb_inacap")
+db.airbnb.find({ $and: [{ "address.country": { $ne: "United States" }, summary: { $regex: /historic area/i, $regex: /botanical garden/i } }] }, { name: 1, "address.country": 1, summary: 1, _id: 0 })
+// 5. Mostrar los nombres de hospedajes ubicados en Portugal, cuya cantidad mínima de noches a reservar sea mayor que 6.
+// Mal formulada
+
+// 6. Mostrar los hospedajes que sean de tipo “Bungalow”, “Villa”, o “Chalet” y que tengan capacidad para 10 o más personas.
+use("mongodb_inacap")
+db.airbnb.find({ $and: [{ $or: [{ property_type: "Bungalow" }, { property_type: "Villa" }, { property_type: "Chalet" }] }, { accommodates: { $gt: 10 } }] }, { _id: 1, name: 1, property_type: 1, accommodates: 1 })
+
+// 7. Contabilizar los hospedajes de “Brazil” que no tienen comentarios ingresados (frst_review) y que no tienen definidos precios semanales ni mensuales (weekly_price, monthly_price).
+use("mongodb_inacap")
+db.airbnb.find({ "address.country": "Brazil", first_review: { $exists: false }, weekly_price: { $exists: false }, monthly_price: { $exists: false } }, { "address.country": 1, first_review: 1, weekly_price: 1, monthly_price: 1 }).count()
+
+// 8. Mostrar los hospedajes y su ubicación (país), que no tengan “Wif”, “TV” ni “Cable TV” y con tipo de cama distinto de “Real Bed”.
+use("mongodb_inacap")
+db.airbnb.find({ $and: [{ "address.country": { $exists: true }, amenities: { $not: { $in: ["Wifi", "TV", "Cable TV"] } }, bed_type: "Real Bed" }] }, { name: 1, amenities: 1, "address.country": 1 })
+// 9. Mostrar los nombres de los hospedajes que no tengan tarifas de limpieza, con precios dentro del rango 100 – 200, con capacidad para 6 o más personas y con 3 o más dormitorios. Mostrar los datos ordenados por precio en forma ascendente.
+use("mongodb_inacap")
+db.airbnb.find({ cleaning_fee: { $exists: false }, price: { $gte: 100, $lte: 200 }, accommodates: { $gte: 6 }, bedrooms: { $gte: 3 } }, { name: 1, price: 1, accommodates: 1, bedrooms: 1, _id: 1 }).sort({ price: 1 })
+// 10. Mostrar los nombres de los hospedajes en España (Spain) o Portugal, que no tengan la prohibición de no fumar (o no smoking) en sus reglas de hospedaje y que tengan como mínimo 7 dormitorios. Listar ordenados por cantidad de dormitorios en forma descendente. Asegurarse que los hospedajes filtrados contengan el campo “house_rules”.
+use("mongodb_inacap")
+db.airbnb.find({ "address.country": { $in: ["Spain", "Portugal"] }, house_rules: { $regex: /\bno smoking\b/i }, bedrooms: { $lte: 7 } }, { "address.country": 1, name: 1, bedrooms: 1, house_rules: 1, _id: 1 }).sort({ bedrooms: -1 })
+
+// PARTE 2 – CRUD (Cada respuesta correcta vale 10%):
+// 11. Para los hospedajes de Australia que tengan 4, dormitorios y 3 o más baños, fjar el precio máximo a 900.
+use("mongodb_inacap")
+db.airbnb.updateMany({ "address.country": "Australia", bedrooms: 4, bathrooms: { gte: 3 } }, { $max: { price: 900 } }) //ejercicio malo
+// 12. Para el hospedaje de nombre “Ribeira Charming Duplex”, agregar el campo “comentario”, con los siguientes datos: nombre=”Margaret Hamilton”, fecha: 12-05-2022, texto = “Mucho calor y demasiado húmedo”.
+use("mongodb_inacap")
+db.airbnb.updateOne({name: "Ribeira Charming Duplex"}, {$set: {comentario:{nombre: "Margaret Hamilton", fecha: ISODate( "2022-05-12"), texto: "Mucho calor y demasiado húmedo "}}})
+db.airbnb.find({ name:"Ribeira Charming Duplex" },{ name:1, comentario:1})
+// 13. Para los hospedajes de China que cuenten con detectores de humo (Smoke detector), y que contengan el campo “security_deposit”, eliminar los campos “cleaning_fee” y “extra_people”.
+use("mongodb_inacap")
+db.airbnb.updateOne({ "address.country": "China", amenities: "Smoke detector", security_deposit: {$exists: true}}, {$unset: {cleaning_fee:"", extra_people:""}})
+// 14,. crea el hospedaje de nombre “Cerros de Valpo”, con la siguiente información (respetar nombres de los campos originales de la colección). insertar
+// • sitio web = “http://cerrosvalpo.cl”,
+// • descripción resumida = “Vista a la bahía para celebración del año nuevo”,
+// • reglas de hospedaje = “No se permite fumar dentro de las habitaciones”,
+// • tipo de habitación “Shared”,
+// • tipo de camas = “air_bed”,
+// • capacidad (personas) = 16, dormitorios = 8, baños = 4,,
+// • dirección = calle = “Av. 14, asientos, 86”, país = Chile”, código de país = “CL”,
+// • precio = 4,00
+use("mongodb_inacap")
+// Registro no existe!!!!!
+db.airbnb.insertOne({
+    name:"Cerros de Valpo",
+    sitio_web: "http://cerrosvalpo.cl",
+    descripcion_resumida: "Vista a la bahía para celebración del año nuevo",
+    reglas_de_hospedaje: "No se permite fumar dentro de las habitaciones",
+    tipo_de_habitacion: "Shared",
+    tipo_de_camas: "air_bed",
+    capacidad: {
+        personas:16,
+        habitaciones: 16,
+        dormitorio: 8,
+        baños:4},
+    direccion: {
+        calle: "Av. 14, asientos, 86",
+        pais: "Chile",
+        codigo: "CL"},
+    precio: 4    
+})
+// 15. Ingresar un nuevo hospedaje de su elección, respetando los nombres originales de los campos de la colección.
+use("mongodb_inacap")
+db.airbnb.insertOne({
+    "name": "Hospedaje de Camila & Luis",
+    "summary": "Descripción resumida de mi nuevo hospedaje",
+    "property_type": "Apartment",
+    "room_type": "Entire home/apt",
+    "bed_type": "Queen",
+    "accommodates": 6,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "beds": 3,
+    "house_rules": "No se permiten mascotas",
+    "last_scraped": new Date(),
+    "amenities": ["Wifi", "TV", "Cocina equipada"],
+    "cleaning_fee": 50.00,
+    "availability": true,
+    "address": {
+      "street": "Calle Principal",
+      "city": "Ciudad Ejemplo",
+      "country": "País Ejemplo",
+      "postal_code": "12345"
+    },
+    "reviews": [
+      {
+        "name": "Juan Pérez",
+        "date": new Date(),
+        "text": "Excelente hospedaje, muy limpio y cómodo"
+      },
+      {
+        "name": "María Gómez",
+        "date": new Date(),
+        "text": "Buena ubicación y atención amable"
+      }
+    ],
+    "number_of_reviews": 2,
+    "price": 160.00,
+    "minimum_nights": 2,
+    "maximum_nights": 7,
+    "listing_url": "http://mihospedajecamilayluis.com"
+  })
