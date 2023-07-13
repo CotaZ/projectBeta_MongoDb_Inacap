@@ -1,10 +1,23 @@
-// 1. Mostrar documentos que tengan solo 1 tag registrado
-// 2. Mostrar documentos que tengan el tags 'vacío'
-// 3. Mostrar documentos que tengan el tags 'vacío', 'rojo' respetando el orden4. Mostrar documentos que tengan el tags 'vacío', 'rojo' sin importar el
-// orden
-// 5. Mostrar documentos donde el dim_cm es mayor a 25
-// 6. Mostrar documentos donde el primer elemento de dim_cm sea menor a
-// 15 (“dim_cm.0”
-
+// 1. Mostrar documentos que tengan solo 1 tags registrado
 use("mongodb_inacap")
+db.inventario.find({ tags: {$size:1}})
+
+// 2. Mostrar documentos que tengan el tags 'vacío'
+use("mongodb_inacap")
+db.inventario.find({ tags: "vacío"}, {tags:1, _id:1})
+
+// 3. Mostrar documentos que tengan el tags 'vacío', 'rojo' respetando el orden4. Mostrar documentos que tengan el tags 'vacío', 'rojo' sin importar el orden
+use("mongodb_inacap")
+db.inventario.find({ tags: {$all: ["vacío", "rojo"]}}, {_id:0, name:1, tags:1})
+
+// 5. Mostrar documentos donde el dim_cm es mayor a 25
+use("mongodb_inacap")
+db.inventario.find({dim_cm: {$gt: 25}}, { name:1, _id:0, dim_cm:1})
+
+// 6. Mostrar documentos donde el primer elemento de dim_cm sea menor a 15 (“dim_cm.0”
+use("mongodb_inacap")
+db.inventario.find({dim_cm: {$lt:15}}, {dim_cm:1, name:1, _id:0})
+
+
+
 

@@ -21,28 +21,55 @@ db.movies.updateOne(
         }
     }
 )
-// 3. Para la película de título "Blacksmith Scene", cambiar el nombre del 2° actor a "Juan Ortega", en el
-// arreglo “cast”.}
+// 3. Para la película de título "Blacksmith Scene", cambiar el nombre del 2° actor a "Juan Ortega", en el arreglo “cast”.}
 use("mongodb_inacap")
-db.movies.
-// 4. Para la película de título "Grass: A Nation's Battle for Life", cambiar el nombre de la actriz "Marguerite
-// Harrison" a "Margarita Herrera" en el arreglo “cast” (aquí no se conoce la posición del elemento dentro del
-// arreglo).
-// 5. Para las series que se hayan filmado en países distintos de "UK" y "USA" y en lenguajes distintos a
-// “English”, agregar el lenguaje “Español” al arreglo “languages”.
-// 6. Para la película de título "A Corner in Wheat", agregar como 3er actor a "Sonia Viveros" (tercer elemento
-// dentro del arreglo “cast”).
-// 7. Para las películas (o series) cuyo género corresponda a: "Drama", "History" y "Crime", eliminar el
-// escritor (writers) "Truman Capote" del arreglo “writers” (usar expresión regular).
-// 8. Para las películas (o series) del año 2002, que en el campo "plot" contengan la palabra "police", eliminar
-// el elemento de valor "English" del arreglo "languages".
+db.movies.updateMany({ title: "Blacksmith Scene" }, { $set: { "cast.1": "Juan Ortega" } })
+// 4. Para la película de título "Grass: A Nation's Battle for Life", cambiar el nombre de la actriz "Marguerite Harrison" a "Margarita Herrera" en el arreglo “cast” (aquí no se conoce la posición del elemento dentro del arreglo).
+use("mongodb_inacap")
+db.movies.updateMany({ title: "Grass: A Nation's Battle for Life", cast: "Marguerite Harrison" }, { $set: { "cast.$": "Margarita Herrera" } })
+
+// 5. Para las series que se hayan filmado en países distintos de "UK" y "USA" y en lenguajes distintos a “English”, agregar el lenguaje “Español” al arreglo “languages”.
+use("mongodb_inacap")
+db.movies.updateMany({ type: "series", paises: { $nin: ["UK", "USA"] }, languages: { ne: "English" } }, { $push: { languages: "Español" } })
+db.movies.find({ type: "series", paises: { $nin: ["UK", "USA"] }, languages: { $ne: "English" } }, { _id: 0, name: 1, type: 1, languages: 1, paises: 1 })
+
+// 6. Para la película de título "A Corner in Wheat", agregar como 3er actor a "Sonia Viveros" (tercer elemento dentro del arreglo “cast”).
+use("mongodb_inacap")
+db.movies.updateMany({ type: "movie", title: "A Corner in Wheat" }, { $push: { cast: { $each: ["Sonia Viveros"], $posittion: 2 } } })
+
+// 7. Para las películas (o series) cuyo género corresponda a: "Drama", "History" y "Crime", eliminar el escritor (writers) "Truman Capote" del arreglo “writers” (usar expresión regular).
+use("mongodb_inacap")
+db.movies.find({ genres: { $all: ["Drama", "History", "Crime"] } }, { $pull: { writers: /Truman Capote/i } })
+use("mongodb_inacap")
+db.movies.updateMany(
+    {
+        $or: [
+            { type: "movie", genres: { $all: ["Drama", "History", "Crime"] } },
+            { type: "series", genres: { $all: ["Drama", "History", "Crime"] } }
+        ]
+    },
+    { $pull: { writers: { $regex: "Truman Capote", $options: "i" } } }
+)
+
+// 8. Para las películas (o series) del año 2002, que en el campo "plot" contengan la palabra "police", eliminar el elemento de valor "English" del arreglo "languages".
+use("mongodb_inacap")
+db.movies.updateMany({ year: 2002, plot: /\bpolice\b/i }, { $pull: { languages: "English" } })
+
 // 9. Para las películas anteriores al año 1920 y que tengan 4 actores o actrices, eliminar los 2 últimos.
-// 10. Para las películas (o series) que tengan 3 actores o actrices, clasificadas con 3 géneros y que no se
-// hayan publicado en un único lenguaje. Agregar al escritor “Óscar Castro” en la 2da posición del arreglo
-// writers, usar operador $not.
-// 11. Para las películas (o series) en que hayan participado 10 u 11 países (countries), cambiar el país “USA”
-// por “EEUU”.
-// 12. Para las películas que tengan 6 directores (directors), se pide agregar al final del arreglo, los
-// siguientes 3 directores: Belfort Rus, Pablo Izquierdo, Víctor Tebah: y eliminar los primeros 3 directores
-// (al final las películas se mantienen con 6 directores).
+use("mongodb_inacap")
+db.movies.updateMany({ year: { $lt: 1920 }, cast: { $size: 4 } }, { $pull: { cast: { $each: [], $slice: 2 } } })
+
+// 10. Para las películas (o series) que tengan 3 actores o actrices, clasificadas con 3 géneros y que no se hayan publicado en un único lenguaje. Agregar al escritor “Óscar Castro” en la 2da posición del arreglo writers, usar operador $not.
+use("mongodb_inacap")
+db.movies.updateMany({ $or: [{ type: "movie", cast: { $size: 3 }, genres: { $size: 3 }, languages: { $not: { $size: 1 } } }, { type: "series", cast: { $size: 3 }, genres: { $size: 3 }, languages: { $not: { $size: 1 } } }] }, { $push: { writers: { $each: ["Oscar Castro"], $position: 2 } } })
+
+// 11. Para las películas (o series) en que hayan participado 10 u 11 países (countries), cambiar el país “USA” por “EEUU”.
+use("mongodb_inacap")
+db.movies.updateMany({ $or: [{ type: "movie", paises: { $size: 10 } }, { type: "movie", paises: { $size: 11 } }, { type: "serie", paises: { $size: 10 } }, { type: "serie", paises: { $size: 11 } }], paises: "USA" }, { $set: { "paises.$": "EEUU" } })
+
+// 12. Para las películas que tengan 6 directores (directors), se pide agregar al final del arreglo, los siguientes 3 directores: Belfort Rus, Pablo Izquierdo, Víctor Tebah: y eliminar los primeros 3 directores (al final las películas se mantienen con 6 directores).
+use("mongodb_inacap")
+db.movies.updateMany({ type: "movie", directors: { $size: 6 } }, 
+{ $push: { directors: { $each: ["Belfort Rus", "Pablo Izquierdo", "Víctor Tebah"], $slice: -6 } } })
+
 

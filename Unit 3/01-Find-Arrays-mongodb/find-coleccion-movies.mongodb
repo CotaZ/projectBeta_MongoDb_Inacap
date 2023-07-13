@@ -1,11 +1,10 @@
-//db.sales.find()
-
 // Colección “movies”:
 // En cada consulta se deben mostrar los datos solicitados en forma explícita e implícita ...
 // 1. Mostrar el primer actor de la película “Trafc in Souls”.
 use("mongodb_inacap")
 db.movies.findOne({
-    title: "Traffic in Souls"},{ cast: {$slice: 1}})
+    title: "Traffic in Souls"
+}, { cast: { $slice: 1 } })
 
 // 2. Mostrar el último actor de la película “Trafc in Souls”.
 use("mongodb_inacap")
@@ -16,21 +15,26 @@ db.movies.findOne({
         $slice: -1
     }
 })
+
 // 3. Mostrar las series que estén clasifcadas solamente con 2 géneros distintos.
 use("mongodb_inacap")
-db.movies.find()//genres
+db.movies.find({ type: "series", genres: { $size: 2 } }, { type: 1, genres: 1, _id: 0 })
 
 // 4. Mostrar las películas en que el 2º actor es “Marlene Dietrich”.
 use("mongodb_inacap")
+db.movies.find({ type: "movie", "cast.1": "Marlene Dietrich" }, { _id: 0, title: 1, type:1, cast: 1 })
 
 // 5. Mostrar las películas de género "War" en que trabaja el actor "Tyrone Power".
 use("mongodb_inacap")
+db.movies.find({type: "movie", genres:"War", cast:"Tyrone Power"}, {_id:0, type:1, genres:1, cast:1})
 
 // 6. Mostrar las películas que fueron flmadas en 2 países.
 use("mongodb_inacap")
+db.movies.find({ type:"movie", paises: {$size: 2}}, {_id:1, type:1, paises:1, title:1})
 
 // 7. Mostrar las películas que fueron flmadas en 2 países y el 2º país no sea "USA".
 use("mongodb_inacap")
+db.movies.find({ type: "movie", paises: {$size:2}, "paises.1": {$ne: "USA"}},{ type:1, paises:1, _id:0})
 
 
 

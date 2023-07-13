@@ -1,71 +1,90 @@
 // Operaciones de Consulta.
 // 1. Mostrar las ventas y sus fechas en que se vendieron 7 "printer paper". // $elemMatch
 use("mongodb_inacap")
-db.sales.find({ items: { $elemMatch: { name: "printer paper", quantity: 7 } } }, { saleDate: 1, "items.quatity": 1, "items.name": 1, _id: 0 }).limit(7)
+db.sales.find({ items: { $elemMatch: { name: "printer paper", quantity: 7 } } },
+    { saleDate: 1, "items.$": 1, _id: 0 })
 // 2. Mostrar las ventas en que el 1er ítem es "binder" (mostrar todos los ítems y el _id).
 use("mongodb_inacap")
-db.sales.find({ "items.0.name": "binder" })
+db.sales.find({ "items.0.name": "binder" }, { _id: 1, items: 1 })
 // 3. Mostrar las ventas en que el 1er ítem es "binder" (mostrar sólo el primer ítem y el _id).
 use("mongodb_inacap")
-db.sales.find({ "items.0.name": "binder" }), { items: 1, _id: 1, }
+db.sales.find({ "items.0.name": "binder" }, { items: { $slice: 1 }, _id: 1 })
 // 4. Mostrar las ventas en que el 1er ítem es "binder" o "notepad", mostrar todos los ítems y el _id.
 use("mongodb_inacap")
-db.sales.find({ $or: [{ "items.0.name": "binder" }, { "items.0.name": "notepad" }] })
+db.sales.find({ $or: [{ "items.0.name": "binder" }, { "items.0.name": "notepad" }] }, { _id: 1, items: 1 })
 // 5. Mostrar las ventas en que el 1er ítem es "binder" o "notepad", mostrar sólo 1er ítem y el _id.
 use("mongodb_inacap")
-db.sales.find({ $or: [{ "items.0.name": "binder" }, { "items.0.name": "notepad" }] }, { "items.name": 1, _id: 1, }).limit(2)
+db.sales.find({ $or: [{ "items.0.name": "binder" }, { "items.0.name": "notepad" }] }, { items: { $slice: 1 }, _id: 1, })
 // 6. Mostrar las ventas en que el 1er ítem es un "notepad", con cantidad < 3 y precio > 20. Mostrar sólo el 1er ítems …
 use("mongodb_inacap")
-db.sales.find({ items: { $elemMatch: { name: "notepad", quantity: { $lt: 3 }, price: { $gt: 20 } } } }, { items: { $slice: 1 } }).limit(1)
+db.sales.find({ "items.0.name": "notepad", "items.0.quantity": { $gt: 3 }, "items.0.price": { $lt: 20 } }, { items: { $slice: 1 }, _id: 0, storeLocation: 0, customer: 0, couponUsed: 0, purchaseMethod: 1, saleDate: 0 })
 // 7. Mostrar las ventas "items" que tengan más de 3 ítems y menos de 6 ítems … Considerar que $size sólo acepta números, no operadores de comparación.
 use("mongodb_inacap")
-db.sales.find({ $expr: { $and: [{ $gt: [{ $size: "$items" }, 3] }, { $lt: [{ $size: "$items" }, 6] }] } }).count()
+db.sales.find({ $or: [{ items: { $size: 4 }, items: { $size: 5 } }] }, { _id: 0, items: 1 })
 // 8. Mostrar las ventas en que el primer ítem está catalogado con 2 tags …
 use("mongodb_inacap")
-db.sales.find({ "items.0.tags": { $size: 2 } })
+db.sales.find({ "items.0.tags": { $size: 2 } }, { "items": { $slice: 1 }, _id: 0, saleDate: 0, storeLocation: 0, customer: 0, couponUsed: 0, purchaseMethod: 0 })
 // 9. Mostrar las ventas en que el 1er ítem, está catalogado con 3 categorías y la última categoría corresponde a “kids” …
 use("mongodb_inacap")
-db.sales.find({ "items.0.tags": { $size: 3, $elemMatch: { $eq: "kids" } } })
+db.sales.find({ "items.0.tags": { $size: 3, $elemMatch: { $eq: "kids" } } }, { "items": { $slice: 1 }, _id: 0, saleDate: 0, couponUsed: 0, storeLocation: 0, customer: 0, purchaseMethod: 0 })
 // 10.Mostrar las ventas que tengan un ítem con el producto “envelopes”, con precio menor que 10 y cantidad > 9 (aquí no se conoce la posición del ítem dentro del arreglo). Mostrar sólo el ítem que cumple la condición.
 use("mongodb_inacap")
-db.sales.find({ "items": {$elemMatch: {"name": "envelopes", "price": {$lt: 10}, "quantity": {$gt: 9}}}})
+db.sales.find({ items: { $elemMatch: { name: "envelopes", price: { $lt: 10 }, quantity: { $gt: 9 } } } }, { "items.$": 1 })
 // 11.Para el documento "5bd761dcae323e45a93cd060", mostrar el 4º y 5º ítem.
 use("mongodb_inacap")
-db.sales.find({ "_id": ObjectId("5bd761dcae323e45a93cd060")},{"items": {$slice: [3,2]}})
+db.sales.find({ _id: ObjectId("5bd761dcae323e45a93cd060") }, { _id: 1, items: { $slice: [3, 2] } })
 // 12.Para las ventas del "2015-04-10", mostrar el último ítem.
 use("mongodb_inacap")
-
+db.sales.find({ saleDate: { $gte: ISODate("2015-04-10"), $lt: ISODate("2015-04-11") } }, { saleDate: 1, _id: 1, items: { $slice: [-1, 1] } })
 
 
 // Operaciones CRUD.
-// 13.Para las ventas del "2017-11-01", agregar el siguiente ítem en la 3ª posición del arreglo items: name = "triciclo", tags = ["kids", "school", "travel"], price = 21.75 (respetar el tipo de dato en la colección), quantity = 1.
+// 13.Para las ventas del "2017-11-01", agregar el siguiente ítem en la 3ª posición del arreglo items: name: "triciclo", tags: ["kids", "school", "travel"], price: 21.75 (respetar el tipo de dato en la colección), quantity: 1.
 use("mongodb_inacap")
-db.sales.find{}
+db.sales.updateMany({ saleDate: { $gte: ISODate("2017-11-01"), $lt: ISODate("2017-11-02") } }, { $push: { items: { $each: [{ name: "triciclo", tags: ["kids", "school", "travel"], price: Decimal128("21.75"), quantity: 1 }], $position: 2 } } })
 // 14.Para las ventas realizadas entre el 15/09/2016 y el 30/09/2016, se debe eliminar del arreglo items el producto "laptop".
 use("mongodb_inacap")
-
+db.sales.updateMany({ saleDate: { $gte: ISODate("2016-09-05"), $lte: ISODate("2016-09-30") } }, { $pull: { items: { name: "laptop" } } })
 // 15.Para las ventas telefónicas (purchaseMethod) efectuadas en "Austin" (storeLocation), con uso de cupones couponUsed=true), que contengan 4 ítems. Se pide agregar los siguientes productod al final del arreglo "items": (nombre:"mouse", tags=["oficina", "colegio"], precio = 5.08, cantidad 2) y (nombre:"teclado", tags=["oficina", "colegio"], precio = 9.40, cantidad 2).
 use("mongodb_inacap")
-
+db.sales.updateMany({ storeLocation: "Austin", purchaseMethod: "Phone", couponUsed: true, items: { $size: 4 } },
+    {
+        $push: {
+            items: {
+                $each: [
+                    { nombre: "mouse", tags: ["oficina", "colegio"], price: Decimal128("5.08"), quantity: 2 },
+                    { nombre: "teclado", tags: ["oficina", "colegio"], price: Decimal128("9.40"), quantity: 2 }]
+            }
+        }
+    })
 // 16.Para la venta con _id = "5bd761dcae323e45a93cd12a", se debe agregar el siguiente producto al final del arreglo items... name = "cerveza", tags = ["cumpleaños", "año nuevo", "carrete"], price = 1.75, quantity = 100.
 use("mongodb_inacap")
+db.sales.updateMany({ _id: ObjectId("5bd761dcae323e45a93cd12a") }, { $push: { name: "cerveza", tags: ["cumpleaños", "año nuevo", "carrete"], price: Decimal128("1.75"), quantity: 100 } })
 
 // 17.Para las ventas con _id "5bd761dcae323e45a93cd3d2", "5bd761dcae323e45a93cd3d7", "5bd761dcae323e45a93cd3e3", se pide modificar el precio mínimo del producto "pens" a 20.55 (respetar el tipo de dato en la colección).
 use("mongodb_inacap")
+db.sales.updateMany({ _id: { $in: [ObjectId("5bd761dcae323e45a93cd3d2"), ObjectId("5bd761dcae323e45a93cd3d7"), ObjectId("5bd761dcae323e45a93cd3e3")] }, "items.name": "pens" }, { $max: { "items.$.price": Decimal128("20.55") } })
 
 // 18.Para las ventas de productos "backpack" con precios menores a 41, se debe agregar la categoría "oferta" al arreglo tags.
 use("mongodb_inacap")
+db.sales.updateMany({ items: { $elemMatch: { name: "backpack", price: { $lt: 41 } } } }, { $push: { "items.$.tags": "oferta" } })
 
 // 19.Para las ventas efectuadas en la sucursal "Denver" (storeLocation), con uso de cupones (couponUsed) y con 10 productos (items), se pide eliminar la categoría "writing" del arreglo tags para el primer producto "notepad" del arreglo items.
 use("mongodb_inacap")
+db.sales.updateMany({ storeLocation: "Denver", couponUsed: true, items: { $size: 10 }, "items.name": "notepad" }, { $pull: { "items.$.tags": "writing" } })
 
-// 20.Para las ventas realizadas por teléfono (purchaseMethod), a clientes de género "M" (gender), que yahan presentado un nivel de satisfacción menor que 2 (satisfaction), se requiere eliminar el primer producto de cada venta (arreglo items).
+// 20.Para las ventas realizadas por teléfono (purchaseMethod), a clientes de género "M" (gender), que ya han presentado un nivel de satisfacción menor que 2 (satisfaction), se requiere eliminar el primer producto de cada venta (arreglo items).
 use("mongodb_inacap")
+db.sales.updateMany({ purchaseMethod: "Phone", "customer.gender": "M", "customer.satisfaction": { $lte: 2 } }, { $pop: { items: -1 } })
 
 // 21.Para las ventas que contengan el producto "binder", con precio menor que 11 y cantidad mayor que 9. Se pide agregar el siguiente producto en la 4ª posición del arreglo items: name = "pizza", tags = ["colación", "almuerzo", "cena"], price = 10.99, quantity = 5.
 use("mongodb_inacap")
+db.sales.updateMany(
+    { items: { $elemMatch: { name: "binder", price: { $lt: 11 }, quantity: { $gt: 9 } } } },
+    { $push: { items: { $each: [{ name: "pizza", tags: ["colacion", "almuerzo", "cena"], price: Decimal128("10.99"), quantity: 5 }], $position: 3 } } })
 
 // 22.Para las ventas vía "Online" (purchaseMethod), realizadas en las sucursales de "New York" o "San Diego" (storeLocation), con utilización de cupones (couponUsed) y cuyos productos están catalogados como "electronics" (items.tags). Se pide agregar la categoría "computación" al final del arreglo tags, para cada producto respectivo del arreglo items.
 use("mongodb_inacap")
-
+db.sales.updateMany({ purchaseMethod: "Online", storeLocation: {$in: ["New York", "San Diego"]}, couponUsed: true, "items.tags": "electronics"},
+{$push: {"items.$.tags":"computacion"}})
 

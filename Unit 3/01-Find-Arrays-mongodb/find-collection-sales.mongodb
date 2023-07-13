@@ -1,10 +1,20 @@
-use("mongodb_inacap")
-
 // Colección “sales”:
 // 8. Mostrar las ventas y sus fechas en que se vendieron 10 "printer paper".
+use("mongodb_inacap")
+db.sales.find({ items: { $elemMatch: { name: "printer paper", quantity: { $eq: 10 } } } }, { "items.$": 1, _id: 0, saleDate: 1 })
 // 9. Mostrar las ventas en que el 1er ítem es "binder" (mostrar todos los ítems).
+use("mongodb_inacap")
+db.sales.find({ "items.0.name": "binder" })
 // 10. Mostrar las ventas en que el 1er ítem es "binder" (mostrar sólo el primer ítem).
+use("mongodb_inacap")
+db.sales.find({ "items.0.name": "binder" }, { _id: 0, items: { $slice: 1 } })
 // 11. Mostrar las ventas en que el 1er ítem es "binder" o "notepad", mostrar todos los ítems.
+use("mongodb_inacap")
+db.sales.find({ $or: [{ "items.0.name": "binder" }, { "items.0.name": "notepad" }] })
 // 12. Mostrar las ventas en que el 1er ítem es "binder" o "notepad", mostrar sólo 1er ítem.
+use("mongodb_inacap")
+db.sales.find({ $or: [{ "items.0.name": "binder" }, { "items.0.name": "notepad" }] }, { _id: 0, items: { $slice: 1 }, saleDate: 0, storeLocation: 0, customer: 0, couponUsed: 0, purchaseMethod: 0 })
 // 13. Mostrar las ventas en que el 1er ítem "notepad", con cantidad < 3 y precio > 20.
+use("mongodb_inacap")
+db.sales.find({ $and: [{ "items.0.name": "notepad" }, { "items.0.quantity": { $eq: 3 } }, { "items.0.price": { $lt: 20 } }] }, { _id: 0, items: { $slice: 1 }, saleDate: 0, storeLocation: 0, customer: 0, couponUsed: 0, purchaseMethod: 0 })
 
